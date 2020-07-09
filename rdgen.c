@@ -67,22 +67,45 @@ read_file(
     return sz;
 }
 
-static void
-print_hex(
+static size_t
+write_file(
+    const char* fname,
+    const size_t sz_org,
+    const double perc,
     const size_t sz,
     const uint8_t* buf)
 {
-    size_t i;
+    size_t wr, i;
+    FILE* fp;
 
+    /*
+     * Write out into C array with the symbols the RamDisk expects..
+     */
+
+    fp = fopen(fname, "w");
+    fprintf(fp, "#include <stdint.h>\n");
+    fprintf(fp, "#include <stddef.h>\n");
+    fprintf(fp, "//\n");
+    fprintf(fp, "// Generated with rdgen\n");
+    fprintf(fp, "// Original was %zu bytes, now just %zu bytes (%.4f%%)\n",
+            sz_org, sz, perc);
+    fprintf(fp, "//\n");
+    fprintf(fp, "uint8_t RAMDISK_IMAGE[] = {");
     for (i = 0; i < sz; i++)
     {
         if (i % 15 == 0)
         {
-            printf("\n");
+            fprintf(fp, "\n    ");
         }
-        printf("0x%02x, ", buf[i]);
+        fprintf(fp, "0x%02x,", buf[i]);
     }
-    printf("\n");
+    fprintf(fp, "\n};\n");
+    fprintf(fp, "size_t RAMDISK_IMAGE_SIZE = sizeof(RAMDISK_IMAGE);\n");
+
+    wr = ftell(fp);
+    fclose(fp);
+
+    return wr;
 }
 
 int
@@ -96,9 +119,9 @@ main(
     double perc;
 
     printf("rdgen: Compress NVM image into RLE encoded RamDisk format\n\n");
-    if (argc != 2)
+    if (argc != 3)
     {
-        printf("Usage: %s <nvm>\n", argv[0]);
+        printf("Usage: %s <nvm> <img>\n", argv[0]);
         return 0;
     }
 
@@ -118,18 +141,13 @@ main(
         die("RleCompressor_compress() failed with %i", err);
     }
 
-    // Print out the array
-    printf("---------------------------------------------");
-    printf("---------------------------------------------");
-    print_hex(sz, buf);
-    printf("---------------------------------------------");
-    printf("---------------------------------------------");
-    printf("\n");
-
     // Print sizes and compression ratio
     perc = (float)sz / (float)sz_org * 100.0;
     printf("Original size:   %12zu bytes\n", sz_org);
     printf("Compressed size: %12zu bytes (%.4f%%)\n", sz, perc);
+
+    // Write to output file
+    sz_buf = write_file(argv[2], sz_org, perc, sz, buf);
 
     // Decompress again
     if ((err = RleCompressor_decompress(sz, buf, sz_org, &sz,
