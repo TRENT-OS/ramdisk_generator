@@ -35,7 +35,7 @@ die(
 
     exit(-1);
 }
-#include "compiler.h"
+
 static size_t
 read_file(
     const char* fname,
