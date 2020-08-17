@@ -10,7 +10,14 @@ cmake_minimum_required(VERSION 3.10)
 # configure and use the SDK
 
 set(OS_SDK_PASSIVE_CMAKE ON)
-include("${OS_SDK_SOURCE_PATH}/CMakeLists.txt")
+if (NOT OS_SDK_PATH)
+    message(FATAL_ERROR "OS_SDK_PATH not set")
+endif()
+if (NOT EXISTS "${OS_SDK_PATH}")
+    message(FATAL_ERROR "OS_SDK_PATH not found: ${OS_SDK_PATH}")
+endif()
+include("${OS_SDK_PATH}/CMakeLists.txt")
+
 os_set_config_file("system_config.h" CREATE_CONFIG_PROJECT)
 add_os_libs_subdirectories()
 
