@@ -16,7 +16,7 @@ add_os_libs_subdirectories()
 
 
 #-------------------------------------------------------------------------------
-project(rdgen C CXX)
+project(rdgen C)
 
 add_executable(${PROJECT_NAME}
     rdgen.c
