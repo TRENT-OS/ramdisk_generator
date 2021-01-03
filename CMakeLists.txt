@@ -39,5 +39,5 @@ target_compile_options(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         os_core_api
-        os_libs
+        lib_util
 )
