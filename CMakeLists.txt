@@ -19,6 +19,7 @@ endif()
 include("${OS_SDK_PATH}/CMakeLists.txt")
 
 os_set_config_file("system_config.h" CREATE_CONFIG_PROJECT)
+add_subdirectory("${OS_SDK_DIR}/os_core_api" "os_core_api")
 add_os_libs_subdirectories()
 
 
