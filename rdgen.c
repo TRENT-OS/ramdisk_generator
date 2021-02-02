@@ -4,7 +4,7 @@
 
 #include "OS_Error.h"
 
-#include "lib_util/RleCompressor.h"
+#include "lib_utils/RleCompressor.h"
 
 #include <stdlib.h>
 #include <stdio.h>
