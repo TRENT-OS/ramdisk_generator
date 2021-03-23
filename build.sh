@@ -31,6 +31,11 @@ if [[ ! -e ${BUILD_DIR} ]]; then
 
         CMAKE_PARAMS=(
             -D OS_SDK_PATH:PATH=${ABS_OS_SDK_PATH}
+
+            # Build type is release with debugging info so that binaries
+            # are at the same time optimized and debug-able, what might be
+            # useful when analyzing tool related issues.
+            -D CMAKE_BUILD_TYPE=RelWithDebInfo
         )
 
         cmake ${CMAKE_PARAMS[@]} -G Ninja ${BUILD_SCRIPT_DIR}
